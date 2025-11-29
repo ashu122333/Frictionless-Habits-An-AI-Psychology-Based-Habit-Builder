@@ -5,8 +5,6 @@ import { jwtDecode } from "jwt-decode";
 import { loginUser } from "../../api/axiosClient";
 
 import AuthImagePattern from "../AuthImagePattern";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [message, setMessage] = useState("");

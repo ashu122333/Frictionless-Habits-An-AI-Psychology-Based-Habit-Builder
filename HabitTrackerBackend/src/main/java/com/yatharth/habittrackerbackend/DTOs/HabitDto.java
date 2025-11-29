@@ -1,20 +1,18 @@
 package com.yatharth.habittrackerbackend.DTOs;
 
-import com.yatharth.habittrackerbackend.Model.Habit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class UserDto {
+public class HabitDto {
     private Integer id;
-    private String email;
-    private String username;
-    private List<Habit> habits;
+    private String title;
+    private String category;
+    private String type;
+    private UserDto user;
 }
