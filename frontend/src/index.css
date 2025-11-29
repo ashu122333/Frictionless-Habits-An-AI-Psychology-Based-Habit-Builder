@@ -2,8 +2,19 @@
 @import "tailwindcss";
 
 :root {
+  --color-primary: #2563eb;   /* blue-600 */
+  --color-primary-dark: #1e40af;
+  --color-secondary: #8b5cf6; /* violet-500 */
+  --color-secondary-dark: #6d28d9;
+  --color-accent: #10b981;    /* emerald-500 */
+
   --bg-color: #F0EFEF;
-  --text-color: black;
+  --text-color: #111827;
+}
+
+.dark {
+  --bg-color: #111827;
+  --text-color: #ffffff;
 }
 
 .dark {
