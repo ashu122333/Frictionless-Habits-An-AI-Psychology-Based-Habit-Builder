@@ -34,7 +34,6 @@ public class SecurityConfig {
 //              .csrf(csrf -> csrf.disable()) above line is same
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-//                    config.addAllowedOrigin("https://byteblogy.vercel.app/");
                     config.addAllowedOrigin("http://localhost:5173/");
                     config.addAllowedMethod("*");
                     config.addAllowedHeader("*");

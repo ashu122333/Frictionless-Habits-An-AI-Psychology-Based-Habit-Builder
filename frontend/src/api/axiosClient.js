@@ -46,5 +46,30 @@ export const loginUser = async (payload) => {
   return response.data; // yeh token (String) deta hai object nahi 
 };
 
+export const postHabit = async (payload) => {
+  const response = await axiosClient.post("habitPost/create", payload);
+  return response.data; //return sccess on the safe save
+}
+
+export const getHabits = async () => {
+  try {
+    const response = await axiosClient.get("habitPost/get");
+    return response.data; //kuch array jaisa milega tho console.log karke check kar lena
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+}
+
+export const deleteHabit = async (id) => {
+  try {
+    const response = await axiosClient.delete(`habitPost/delete/${id}`);
+    return response.data; //returns success on safe save
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+}
+
 
 export default axiosClient;

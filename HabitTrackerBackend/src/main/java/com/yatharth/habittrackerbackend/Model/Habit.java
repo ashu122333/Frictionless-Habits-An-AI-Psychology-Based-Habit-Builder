@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Habit {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     @Column(nullable = false)
@@ -24,6 +24,7 @@ public class Habit {
 
     private String category;
     private String type;
+    private String status;
 
     @CreationTimestamp
     @Column(updatable = false)

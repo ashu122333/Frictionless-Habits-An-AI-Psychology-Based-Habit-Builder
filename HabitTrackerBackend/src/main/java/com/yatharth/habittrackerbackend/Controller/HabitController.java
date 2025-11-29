@@ -2,7 +2,6 @@ package com.yatharth.habittrackerbackend.Controller;
 
 import com.yatharth.habittrackerbackend.DTOs.HabitDto;
 import com.yatharth.habittrackerbackend.DTOs.HabitPostRequest;
-import com.yatharth.habittrackerbackend.Model.Habit;
 import com.yatharth.habittrackerbackend.Service.HabitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/habitPost")
+@CrossOrigin(origins = "http://localhost:5173/")
 public class HabitController {
     private final HabitService service;
 
@@ -26,7 +26,7 @@ public class HabitController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Habit>> getHabits(Principal principal){
+    public ResponseEntity<List<HabitDto>> getHabits(Principal principal){
         String username = principal.getName();
         return service.getHabits(username);
     }

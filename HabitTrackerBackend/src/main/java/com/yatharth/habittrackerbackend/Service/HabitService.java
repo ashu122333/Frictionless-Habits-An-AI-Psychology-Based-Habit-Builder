@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,9 +36,12 @@ public class HabitService {
         return new ResponseEntity<>(HabitMapper.toDto(habit), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<List<Habit>> getHabits(String username) {
-        User user = userRepo.findByUsername(username).orElse(null);
-        List<Habit> habits = user.getHabits();
+    public ResponseEntity<List<HabitDto>> getHabits(String username) {
+        List<HabitDto> habits = habitRepo.findByUserUsername(username)
+                .stream()
+                .map(HabitMapper::toDto)
+                .toList();
+
         return ResponseEntity.ok(habits);
     }
 

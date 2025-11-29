@@ -1,0 +1,2 @@
+1. bhaai yeh List.jsx ko acha style de de and jaha bhi tujhe list dikhana ho tho ussi ko use kar lena
+2. Post Habit ko bhi as a sepreate Component use karne ka try karna
