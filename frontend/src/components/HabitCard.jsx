@@ -1,3 +1,5 @@
+import { Target, Trash2 } from "lucide-react";
+
 const HabitCard = ({ habit, onToggle, onDelete }) => {
   const getStreakColor = (streak) => {
     if (streak >= 30) return 'text-purple-600';
@@ -25,13 +27,15 @@ const HabitCard = ({ habit, onToggle, onDelete }) => {
           onClick={() => onDelete(habit.id)}
           className="text-gray-400 hover:text-red-500 transition-colors"
         >
-          <Trash2 size={18} />
+          {/* <Trash2 size={18} /> */}
+          🗑️
         </button>
       </div>
 
       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
         <div className="flex items-center gap-2">
-          <Target className={`${getStreakColor(habit.streak)}`} size={20} />
+          {/* <Target className={`${getStreakColor(habit.streak)}`} size={20} /> */}
+          🎯
           <span className={`text-2xl font-bold ${getStreakColor(habit.streak)}`}>
             {habit.streak}
           </span>
