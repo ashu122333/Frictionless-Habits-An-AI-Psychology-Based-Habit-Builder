@@ -19,7 +19,13 @@ function App() {
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/myhabits" element={<HabitList />} />
+
+        {/* <Route path="/myhabits" element={
+          <ProtectedRoute>
+            <HabitList />
+          </ProtectedRoute>
+          }
+        /> */}
       </Routes>
     </Router>
   );
