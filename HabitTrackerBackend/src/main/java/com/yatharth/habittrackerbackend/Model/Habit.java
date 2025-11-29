@@ -18,6 +18,4 @@ public class Habit {
 
     @Column(nullable = false)
     private String title;
-
-
 }
