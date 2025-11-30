@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "./components/Auth/Register";
 import Login from "./components/Auth/Login";
 import axios from "axios";
-import List from "./components/List";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import HabitList from "./components/pages/HabitList";
 import HabitDetail from "./components/HabitDetail";

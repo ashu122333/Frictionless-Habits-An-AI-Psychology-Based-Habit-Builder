@@ -9,8 +9,7 @@ import {
   getHabitStreak
 } from "../../api/axiosClient";
 
-import HabitAnalytics from ".//HabitAnalytics";
-
+import HabitAnalytics from "./HabitAnalytics";
 import HabitCard from "../HabitCard";
 
 const HabitList = () => {
@@ -95,34 +94,56 @@ const HabitList = () => {
 
   if (loading) {
     return (
-      <h2 className="text-center text-gray-500 mt-20 text-xl animate-pulse">
-        Loading habits...
-      </h2>
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-700">Loading habits...</h2>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Habit Tracker
-          </h1>
-          <p className="text-gray-600">
-            Build better habits, one day at a time
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        
+        {/* Hero Header with 3D Effects */}
+        <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-3xl p-8 shadow-2xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-32 -translate-y-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl transform -translate-x-24 translate-y-24"></div>
+          
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center shadow-xl">
+              <span className="text-4xl">🎯</span>
+            </div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-1">
+                Habit Tracker
+              </h1>
+              <p className="text-blue-100 text-lg">
+                Build better habits, one day at a time
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Your Habits</h2>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-3 rounded-xl font-medium shadow-lg"
-          >
-            + Add Habit
-          </button>
+        <div className="bg-white rounded-2xl p-6 shadow-xl border border-slate-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Your Habits</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {habits.length} active habit{habits.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+            >
+              <span className="text-xl">+</span>
+              Add Habit
+            </button>
+          </div>
         </div>
 
         {/* Habit Grid */}
@@ -144,17 +165,21 @@ const HabitList = () => {
 
         {/* Blank state */}
         {habits.length === 0 && (
-          <div className="text-center py-20 opacity-80">
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          <div className="bg-white rounded-3xl p-16 text-center shadow-xl border border-slate-100">
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-5xl">🎯</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               No habits yet
             </h3>
-            <p className="text-gray-500 mb-6">
-              Start building better habits today!
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+              Start building better habits today! Create your first habit to begin tracking your progress.
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 to-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
             >
+              <span className="text-xl">+</span>
               Create Your First Habit
             </button>
           </div>
@@ -162,31 +187,36 @@ const HabitList = () => {
 
         {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
-            <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-scaleIn">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+            <div className="bg-white rounded-3xl w-full max-w-lg p-8 shadow-2xl">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  Create New Habit
-                </h3>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-2xl">✨</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Create New Habit
+                  </h3>
+                </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 transition-colors text-2xl hover:bg-gray-100 w-10 h-10 rounded-lg flex items-center justify-center"
                 >
-                  ✖
+                  ✕
                 </button>
               </div>
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="text-gray-700 font-medium text-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Habit Title
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g., Read 10 pages"
-                    className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
@@ -194,25 +224,25 @@ const HabitList = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-gray-700 font-medium text-sm">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Category
                     </label>
                     <input
                       type="text"
                       required
                       placeholder="e.g., Health"
-                      className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <label className="text-gray-700 font-medium text-sm">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Type
                     </label>
                     <select
-                      className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
                       value={type}
                       onChange={(e) => setType(e.target.value)}
                     >
@@ -224,9 +254,17 @@ const HabitList = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl shadow-lg font-semibold hover:shadow-xl"
+                  disabled={habitLoading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 rounded-xl shadow-lg hover:shadow-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {habitLoading ? "Creating..." : "Create Habit"}
+                  {habitLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Creating...
+                    </span>
+                  ) : (
+                    "Create Habit"
+                  )}
                 </button>
               </form>
             </div>
@@ -235,8 +273,9 @@ const HabitList = () => {
       </div>
 
       {/* Analytics Section */}
-<HabitAnalytics habits={habits} />
-
+      <div className="max-w-7xl mx-auto">
+        <HabitAnalytics habits={habits} />
+      </div>
     </div>
   );
 };

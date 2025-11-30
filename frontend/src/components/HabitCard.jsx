@@ -11,13 +11,13 @@ const statusLabel = {
 };
 
 const statusStyles = {
-  COMPLETED: "bg-green-500 text-white hover:bg-green-600",
-  SKIPPED: "bg-red-400 text-white hover:bg-red-500",
-  FAILED: "bg-red-700 text-white hover:bg-red-800",
-  DELAYED: "bg-yellow-400 text-white hover:bg-yellow-500",
-  BROKEN: "bg-orange-500 text-white hover:bg-orange-600",
-  PENDING: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-  ARCHIVED: "bg-transparent text-gray-500 border border-gray-300"
+  COMPLETED: "bg-gradient-to-r from-teal-500 to-cyan-600 text-white hover:from-teal-600 hover:to-cyan-700",
+  SKIPPED: "bg-gradient-to-r from-yellow-500 to-amber-600 text-white hover:from-yellow-600 hover:to-amber-700",
+  FAILED: "bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700",
+  DELAYED: "bg-gradient-to-r from-orange-400 to-orange-600 text-white hover:from-orange-500 hover:to-orange-700",
+  BROKEN: "bg-gradient-to-r from-red-600 to-rose-700 text-white hover:from-red-700 hover:to-rose-800",
+  PENDING: "bg-gradient-to-r from-indigo-400 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-700",
+  ARCHIVED: "bg-gray-100 text-gray-500 border border-gray-300 hover:bg-gray-200"
 };
 
 const HabitCard = ({ habit, onStatusChange, onDelete }) => {
@@ -25,17 +25,17 @@ const HabitCard = ({ habit, onStatusChange, onDelete }) => {
 
   const todayStatus = habit.todayStatus || "PENDING";
 
-  const getStreakColor = (streak) => {
-    if (streak >= 30) return "text-purple-600";
-    if (streak >= 14) return "text-blue-600";
-    if (streak >= 7) return "text-green-600";
-    return "text-gray-500";
+  const getStreakGradient = (streak) => {
+    if (streak >= 30) return 'from-fuchsia-500 via-purple-500 to-indigo-600';
+    if (streak >= 14) return 'from-cyan-500 via-sky-500 to-blue-600';
+    if (streak >= 7) return 'from-lime-500 via-green-500 to-emerald-600';
+    return 'from-gray-400 via-slate-500 to-zinc-600';
   };
 
-  const getTypeColor = (type) =>
+  const getTypeStyle = (type) =>
     type === "good"
-      ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-      : "bg-rose-100 text-rose-700 border border-rose-200";
+      ? "from-teal-500 to-cyan-600"
+      : "from-pink-500 to-rose-600";
 
   const updateStatus = (status) => {
     onStatusChange(habit.id, status);
@@ -43,51 +43,66 @@ const HabitCard = ({ habit, onStatusChange, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all border border-gray-100">
-
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-bold text-gray-900">{habit.title}</h3>
-
-          <span className={`mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold ${getTypeColor(habit.type)}`}>
-            {habit.category}
-          </span>
+    <div className="relative group">
+      {/* Glow effect on hover */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-600 to-purple-600 rounded-3xl opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+      
+      <div className="relative bg-gradient-to-br from-white to-slate-50 rounded-3xl p-6 shadow-xl border border-slate-200 transition-all">
+        
+        {/* Header */}
+        <div className="flex items-start justify-between mb-5">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
+              {habit.title}
+            </h3>
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r ${getTypeStyle(habit.type)} shadow-lg`}>
+              <span className="text-xs font-bold text-white tracking-wide uppercase">
+                {habit.category}
+              </span>
+            </div>
+          </div>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(habit.id);
+            }}
+            className="text-gray-400 hover:text-red-500 transition-all p-2.5 hover:bg-red-50 rounded-xl hover:scale-110"
+          >
+            <span className="text-lg">🗑️</span>
+          </button>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(habit.id);
-          }}
-          className="text-gray-400 hover:text-red-500 transition-colors p-1"
-        >
-          🗑️
-        </button>
-      </div>
-
-      {/* Footer Section */}
-      <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
-
-        {/* Streak */}
-        <div className="flex items-center gap-2">
-          🔥
-          <span className={`text-2xl font-bold ${getStreakColor(habit.streak)}`}>
-            {habit.streak}
-          </span>
-          <span className="text-sm text-gray-500">day streak</span>
+        {/* Streak Display - Big and Bold */}
+        <div className={`mb-5 p-6 bg-gradient-to-r ${getStreakGradient(habit.streak || 0)} rounded-2xl shadow-lg`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-5xl filter drop-shadow-lg">🔥</span>
+              <div>
+                <p className="text-4xl font-black text-white drop-shadow-md">
+                  {habit.streak || 0}
+                </p>
+                <p className="text-sm text-white/90 font-semibold">Days</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-white/80 font-medium">Current Streak</p>
+              <p className="text-2xl font-bold text-white">
+                {(habit.streak || 0) >= 30 ? '🏆' : (habit.streak || 0) >= 14 ? '⭐' : (habit.streak || 0) >= 7 ? '💪' : '🌱'}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Status Controls */}
         <div className="relative flex items-center gap-2">
-
-          {/* Main Button */}
+          {/* Main Status Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               updateStatus("COMPLETED");
             }}
-            className={`px-4 py-2 rounded-xl font-medium ${statusStyles[todayStatus]} transition-all`}
+            className={`flex-1 px-4 py-3 rounded-xl font-semibold shadow-lg ${statusStyles[todayStatus]} transition-all`}
           >
             {statusLabel[todayStatus]}
           </button>
@@ -98,14 +113,14 @@ const HabitCard = ({ habit, onStatusChange, onDelete }) => {
               e.stopPropagation();
               setDropdownOpen(!dropdownOpen);
             }}
-            className="px-3 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 text-gray-600"
+            className="px-4 py-3 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl hover:from-slate-200 hover:to-slate-300 text-gray-700 font-bold shadow-lg transition-all"
           >
             ▼
           </button>
 
-          {/* Dropdown */}
+          {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute top-12 right-0 bg-white shadow-xl border border-gray-200 rounded-xl w-40 py-1 z-50">
+            <div className="absolute top-14 right-0 bg-white shadow-2xl border border-slate-200 rounded-2xl w-48 py-2 z-50 animate-slideDown">
               {["COMPLETED", "SKIPPED", "FAILED", "DELAYED", "BROKEN", "PENDING"].map(
                 (status) => (
                   <div
@@ -114,7 +129,7 @@ const HabitCard = ({ habit, onStatusChange, onDelete }) => {
                       e.stopPropagation();
                       updateStatus(status);
                     }}
-                    className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2.5 text-sm font-semibold hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer transition-all text-gray-700 hover:text-gray-900"
                   >
                     {statusLabel[status]}
                   </div>
@@ -123,8 +138,23 @@ const HabitCard = ({ habit, onStatusChange, onDelete }) => {
             </div>
           )}
         </div>
-
       </div>
+
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-slideDown {
+          animation: slideDown 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

@@ -44,7 +44,7 @@ const HabitCalendar = ({ logs }) => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="flex gap-[4px] p-3 bg-white rounded-xl shadow border border-gray-200">
+      <div className="flex gap-1 p-3 bg-white rounded-xl shadow border border-gray-200">
 
         {weeks.map((week, wi) => {
           const isNewMonth =
