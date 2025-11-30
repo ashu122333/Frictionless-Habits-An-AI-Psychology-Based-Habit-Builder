@@ -32,7 +32,7 @@ public class HabitController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteHabit(@PathVariable Integer id){
-        return service.deleteHabit(id);
+    public ResponseEntity<String> deleteHabit(@PathVariable Integer id, Principal principal){
+        return service.deleteHabit(id, principal.getName());
     }
 }

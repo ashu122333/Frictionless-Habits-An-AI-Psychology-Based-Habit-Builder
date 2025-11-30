@@ -54,6 +54,7 @@ export const postHabit = async (payload) => {
 export const getHabits = async () => {
   try {
     const response = await axiosClient.get("habitPost/get");
+    console.log(response.data);
     return response.data; //kuch array jaisa milega tho console.log karke check kar lena
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -70,6 +71,34 @@ export const deleteHabit = async (id) => {
     throw error;
   }
 }
+
+export const getHabitCalendar = async (habitId) => {
+  const res = await axiosClient.get(`/habits/logs/${habitId}/calendar`);
+  return res.data;
+};
+
+export const getHabitStreak = async (habitId) => {
+  const res = await axiosClient.get(`/habits/logs/${habitId}/streak`);
+  return res.data;
+};
+
+export const completeHabit = async (habitId) => {
+  return axiosClient.post(`/habits/logs/${habitId}/complete`);
+};
+
+export const skipHabit = async (habitId) => {
+  return axiosClient.post(`/habits/logs/${habitId}/skip`);
+};
+
+export const setHabitStatus = async (habitId, status) => {
+  return axiosClient.post(`/habits/logs/${habitId}/status?value=${status}`);
+};
+
+export const getTodayStatus = async (habitId) => {
+  const res = await axiosClient.get(`/habits/logs/${habitId}/today`);
+  return res.data;
+};
+
 
 
 export default axiosClient;

@@ -6,6 +6,7 @@ import axios from "axios";
 import List from "./components/List";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import HabitList from "./components/pages/HabitList";
+import HabitDetail from "./components/HabitDetail";
 // import HabitList from "./components/pages/HabitList.jsx";
 
 function App() {
@@ -35,6 +36,13 @@ function App() {
           </ProtectedRoute>
           }
         />
+
+        <Route path="/habit/:habitId" element={
+          <ProtectedRoute>
+            <HabitDetail />
+          </ProtectedRoute>
+        } />
+
       </Routes>
     </Router>
   );

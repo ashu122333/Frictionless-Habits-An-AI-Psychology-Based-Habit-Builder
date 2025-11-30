@@ -5,31 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class Habit {
+public class HabitLog {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @Column(nullable = false)
-    private String title;
+    private LocalDate date;
 
-    private String category;
-    private String type;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    private HabitStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "habit_id")
+    private Habit habit;
 }

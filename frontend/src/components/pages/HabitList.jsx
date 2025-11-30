@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Plus, X, Check, Trash2, Target } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  getHabits,
+  postHabit,
+  deleteHabit,
+  setHabitStatus,
+  getTodayStatus,
+  getHabitStreak
+} from "../../api/axiosClient";
+
+import HabitAnalytics from ".//HabitAnalytics";
+
 import HabitCard from "../HabitCard";
-import { getHabits, postHabit, deleteHabit } from "../../api/axiosClient";
 
 const HabitList = () => {
   const [habits, setHabits] = useState([]);
@@ -14,18 +24,50 @@ const HabitList = () => {
   const [loading, setLoading] = useState(true);
   const [habitLoading, setHabitLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     loadHabits();
   }, []);
 
   const loadHabits = async () => {
     try {
-      const data = await getHabits();
-      setHabits(data || []);
+      const list = await getHabits();
+
+      const enriched = await Promise.all(
+        list.map(async (h) => {
+          const [todayStatus, streak] = await Promise.all([
+            getTodayStatus(h.id),
+            getHabitStreak(h.id),
+          ]);
+
+          return {
+            ...h,
+            todayStatus,
+            streak,
+          };
+        })
+      );
+
+      setHabits(enriched);
     } catch (err) {
       console.error("Error fetching habits:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (habitId, status) => {
+    await setHabitStatus(habitId, status);
+    loadHabits(); // refresh
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteHabit(id);
+      loadHabits();
+    } catch (err) {
+      console.error("Delete failed:", err);
     }
   };
 
@@ -36,14 +78,13 @@ const HabitList = () => {
 
     try {
       setHabitLoading(true);
-      const res = await postHabit(payload);
-      console.log("Habit Created:", res);
+      await postHabit(payload);
+      setIsModalOpen(false);
 
       setTitle("");
       setCategory("");
-      setType("");
+      setType("good");
 
-      // if (onHabitCreated) onHabitCreated();
       loadHabits();
     } catch (error) {
       console.error("Error creating habit:", error);
@@ -60,37 +101,10 @@ const HabitList = () => {
     );
   }
 
-  const toggleHabit = (id) => {
-    setHabits(
-      habits.map((habit) =>
-        habit.id === id
-          ? {
-              ...habit,
-              completedToday: !habit.completedToday,
-              streak: !habit.completedToday
-                ? habit.streak + 1
-                : Math.max(0, habit.streak - 1),
-            }
-          : habit
-      )
-    );
-  };
-
-  // const deleteHabit = (id) => {
-  //   setHabits(habits.filter(habit => habit.id !== id));
-  // };
-  const handleDelete = async (id) => {
-    try {
-      await deleteHabit(id);
-      loadHabits(); // refresh list
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Habit Tracker
@@ -100,74 +114,79 @@ const HabitList = () => {
           </p>
         </div>
 
+        {/* Toolbar */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">All Habits</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Your Habits</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-3 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg hover:shadow-xl"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-3 rounded-xl font-medium shadow-lg"
           >
-            {/* <Plus size={20} /> */}+ Add Habit
+            + Add Habit
           </button>
         </div>
 
+        {/* Habit Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {habits.map((habit) => (
-            <HabitCard
+            <div
               key={habit.id}
-              habit={habit}
-              onToggle={toggleHabit}
-              onDelete={handleDelete}
-            />
+              className="cursor-pointer"
+              onClick={() => navigate(`/habit/${habit.id}`)}
+            >
+              <HabitCard
+                habit={habit}
+                onStatusChange={handleStatusChange}
+                onDelete={handleDelete}
+              />
+            </div>
           ))}
         </div>
 
+        {/* Blank state */}
         {habits.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              {/* <Target size={48} className="text-gray-400" /> */}
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+          <div className="text-center py-20 opacity-80">
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">
               No habits yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-500 mb-6">
               Start building better habits today!
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium inline-flex items-center gap-2 transition-all"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 to-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg"
             >
-              {/* <Plus size={20} /> */}
               Create Your First Habit
             </button>
           </div>
         )}
 
-        {/* Add Habit Modal */}
+        {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+            <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-scaleIn">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-900">
                   Create New Habit
                 </h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600"
                 >
-                  {/* <X size={24} /> */}❌
+                  ✖
                 </button>
               </div>
 
-              <div className="space-y-5">
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="text-gray-700 font-medium text-sm">
                     Habit Title
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g., Read 10 pages"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                    className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
@@ -175,24 +194,25 @@ const HabitList = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="text-gray-700 font-medium text-sm">
                       Category
                     </label>
                     <input
                       type="text"
                       required
                       placeholder="e.g., Health"
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
+                      className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                     />
                   </div>
+
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="text-gray-700 font-medium text-sm">
                       Type
                     </label>
                     <select
-                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all bg-white"
+                      className="w-full mt-1 px-4 py-3 rounded-xl border-2 border-gray-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                       value={type}
                       onChange={(e) => setType(e.target.value)}
                     >
@@ -202,26 +222,21 @@ const HabitList = () => {
                   </div>
                 </div>
 
-                <div className="pt-4">
-                  <button
-                    onClick={handleSubmit}
-                    className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-xl"
-                  >
-                    {habitLoading ? (
-                      <>
-                        {/* <Loader2 className="h-5 w-5 animate-spin" /> */}
-                        Loading...
-                      </>
-                    ) : (
-                      "Create Habit"
-                    )}
-                  </button>
-                </div>
-              </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl shadow-lg font-semibold hover:shadow-xl"
+                >
+                  {habitLoading ? "Creating..." : "Create Habit"}
+                </button>
+              </form>
             </div>
           </div>
         )}
       </div>
+
+      {/* Analytics Section */}
+<HabitAnalytics habits={habits} />
+
     </div>
   );
 };
